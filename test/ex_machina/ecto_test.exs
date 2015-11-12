@@ -7,6 +7,7 @@ defmodule ExMachina.EctoTest do
     schema "users" do
       field :name, :string
       field :admin, :boolean
+      field :inserted_at, Ecto.DateTime
     end
   end
 
@@ -94,7 +95,8 @@ defmodule ExMachina.EctoTest do
     assert Factory.fields_for(:user) == %{
       id: nil,
       name: "John Doe",
-      admin: false
+      admin: false,
+      inserted_at: nil
     }
   end
 
@@ -114,6 +116,13 @@ defmodule ExMachina.EctoTest do
 
     new_user = TestRepo.one!(User)
     assert model == new_user
+  end
+
+  test "save_record/1 casts value before inserting" do
+    model = Factory.save_record(%User{inserted_at: "2001-02-03T04:05:06Z"})
+
+    user = TestRepo.one!(User)
+    assert user.inserted_at == ""
   end
 
   test "save_record/1 saves associated records and sets the association and association id" do

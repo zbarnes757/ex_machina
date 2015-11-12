@@ -124,8 +124,10 @@ defmodule ExMachina.Ecto do
     record = record |> persist_belongs_to_associations(module)
     changes = record |> convert_to_changes
 
+    optional_fields = changes |> Dict.keys
+
     struct(model)
-    |> Ecto.Changeset.change(changes)
+    |> Ecto.Changeset.cast(changes, [], optional_fields)
     |> repo.insert!
     |> restore_belongs_to_associations(record)
   end
