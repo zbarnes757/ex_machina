@@ -225,6 +225,14 @@ Before opening a pull request, please open an issue first.
 
 Once you've made your additions and `mix test` passes, go ahead and open a PR!
 
+#### Generating Test Migrations
+
+If you need to create or modify tables for testing ExMachina, this is the format
+you will need to use:
+
+`MIX_ENV=test mix ecto.gen.migration YOUR_MIGRATION_NAME --repo
+ExMachina.TestRepo`
+
 ## License
 
 ExMachina is Copyright © 2015 thoughtbot. It is free software, and may be
