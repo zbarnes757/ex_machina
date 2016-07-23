@@ -70,20 +70,26 @@ defmodule ExMachina.EctoStrategy do
     assocs = schema.__schema__(:associations)
 
     Enum.reduce(assocs, struct, fn(assoc, struct) ->
-      original_value = Map.get(struct, assoc)
-      casted_value = cast_assoc(original_value)
+      casted_value = cast_assoc(assoc, struct)
       Map.put(struct, assoc, casted_value)
     end)
   end
 
-  defp cast_assoc(record) do
-    case record do
+  defp cast_assoc(assoc, %{__struct__: schema} = struct) do
+    original_assoc = Map.get(struct, assoc)
+
+    case original_assoc do
       %{__meta__: %{__struct__: Ecto.Schema.Metadata, state: :built}} ->
-        cast(record)
+        cast(original_assoc)
+      %{__struct__: _} ->
+        original_assoc
       records = [_ | _] ->
         Enum.map(records, &(cast(&1)))
+      %{} ->
+        assoc_type = schema.__schema__(:association, assoc).related
+        assoc_type |> struct |> Map.merge(original_assoc) |> cast
       _ ->
-        record
+        original_assoc
     end
   end
 end

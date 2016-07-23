@@ -65,6 +65,12 @@ defmodule ExMachina.EctoStrategyTest do
     assert user.id != nil
   end
 
+  test "insert/1 casts bare maps" do
+    model = TestFactory.insert(:article, author: %{net_worth: 300})
+
+    assert model.author.net_worth == Decimal.new(300)
+  end
+
   test "insert/1 casts associations recursively" do
     editor = TestFactory.build(:user, net_worth: 300)
     article = TestFactory.build(:article, editor: editor)
